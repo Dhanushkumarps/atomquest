@@ -4,6 +4,7 @@ import type { Role } from "@prisma/client";
 // Edge-safe auth config — NO Prisma, NO bcrypt, NO Node.js-only modules.
 // This is used by middleware.ts which runs on the Edge runtime.
 export const authConfig: NextAuthConfig = {
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/login",
   },
