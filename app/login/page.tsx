@@ -24,37 +24,26 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
-    const result = await signIn("credentials", {
+    await signIn("credentials", {
       email,
       password,
-      redirect: false,
+      callbackUrl: "/",
     });
-
-    if (result?.error) {
-      setError("Invalid email or password. Try a demo account below.");
-      setLoading(false);
-      return;
-    }
-
-    router.push("/");
-    router.refresh();
   };
 
   const loginAsDemo = async (demoEmail: string) => {
     setLoading(true);
     setError(null);
-    const result = await signIn("credentials", {
+    
+    let callbackUrl = "/employee/dashboard";
+    if (demoEmail.includes("manager")) callbackUrl = "/manager/dashboard";
+    if (demoEmail.includes("admin")) callbackUrl = "/admin/dashboard";
+
+    await signIn("credentials", {
       email: demoEmail,
       password: "demo123",
-      redirect: false,
+      callbackUrl,
     });
-    if (result?.ok) {
-      router.push("/");
-      router.refresh();
-    } else {
-      setError("Demo login failed. Please run the seed script first.");
-      setLoading(false);
-    }
   };
 
   return (
