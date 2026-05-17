@@ -1,12 +1,15 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResendClient() {
+  return new Resend(process.env.RESEND_API_KEY || "placeholder");
+}
 
 export async function sendGoalSubmittedEmail(
   managerEmail: string,
   employeeName: string,
   managerName: string
 ) {
+  const resend = getResendClient();
   try {
     await resend.emails.send({
       from: "AtomQuest <noreply@atomquest.demo>",
@@ -40,6 +43,7 @@ export async function sendGoalApprovedEmail(
   employeeEmail: string,
   employeeName: string
 ) {
+  const resend = getResendClient();
   try {
     await resend.emails.send({
       from: "AtomQuest <noreply@atomquest.demo>",
@@ -74,6 +78,7 @@ export async function sendGoalReturnedEmail(
   employeeName: string,
   reason: string
 ) {
+  const resend = getResendClient();
   try {
     await resend.emails.send({
       from: "AtomQuest <noreply@atomquest.demo>",
@@ -111,6 +116,7 @@ export async function sendCheckinReminderEmail(
   employeeName: string,
   quarter: string
 ) {
+  const resend = getResendClient();
   try {
     await resend.emails.send({
       from: "AtomQuest <noreply@atomquest.demo>",
