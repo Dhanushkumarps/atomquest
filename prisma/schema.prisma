@@ -1,0 +1,159 @@
+// prisma/schema.prisma
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  EMPLOYEE
+  MANAGER
+  ADMIN
+}
+
+enum UoM {
+  NUMERIC_MIN
+  NUMERIC_MAX
+  TIMELINE
+  ZERO
+}
+
+enum GoalStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REWORK
+  LOCKED
+}
+
+enum Quarter {
+  Q1
+  Q2
+  Q3
+  Q4
+}
+
+enum AchievementStatus {
+  NOT_STARTED
+  ON_TRACK
+  COMPLETED
+}
+
+enum EscalationTrigger {
+  GOAL_NOT_SUBMITTED
+  MANAGER_NOT_APPROVED
+  CHECKIN_OVERDUE
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String
+  password     String
+  role         Role          @default(EMPLOYEE)
+  department   String?
+  managerId    String?
+  manager      User?         @relation("Hierarchy", fields: [managerId], references: [id])
+  reports      User[]        @relation("Hierarchy")
+  goals        Goal[]
+  auditLogs    AuditLog[]    @relation("AuditUser")
+  checkins     Checkin[]     @relation("CheckinManager")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Cycle {
+  id               String    @id @default(cuid())
+  name             String
+  goalSettingStart DateTime
+  goalSettingEnd   DateTime
+  q1Start          DateTime
+  q1End            DateTime
+  q2Start          DateTime
+  q2End            DateTime
+  q3Start          DateTime
+  q3End            DateTime
+  q4Start          DateTime
+  q4End            DateTime
+  isActive         Boolean   @default(false)
+  goals            Goal[]
+  createdAt        DateTime  @default(now())
+}
+
+model Goal {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  cycleId      String
+  cycle        Cycle         @relation(fields: [cycleId], references: [id])
+  thrustArea   String
+  title        String
+  description  String
+  uom          UoM
+  target       Float
+  weightage    Float
+  status       GoalStatus    @default(DRAFT)
+  isShared     Boolean       @default(false)
+  sharedFromId String?
+  lockedAt     DateTime?
+  returnReason String?
+  achievements Achievement[]
+  checkins     Checkin[]
+  auditLogs    AuditLog[]    @relation("AuditGoal")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Achievement {
+  id             String            @id @default(cuid())
+  goalId         String
+  goal           Goal              @relation(fields: [goalId], references: [id])
+  quarter        Quarter
+  actual         Float?
+  status         AchievementStatus @default(NOT_STARTED)
+  progressScore  Float?
+  notes          String?
+  updatedAt      DateTime          @updatedAt
+  createdAt      DateTime          @default(now())
+
+  @@unique([goalId, quarter])
+}
+
+model Checkin {
+  id         String   @id @default(cuid())
+  goalId     String
+  goal       Goal     @relation(fields: [goalId], references: [id])
+  managerId  String
+  manager    User     @relation("CheckinManager", fields: [managerId], references: [id])
+  quarter    Quarter
+  comment    String
+  createdAt  DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  entityType String
+  entityId   String
+  goal       Goal?    @relation("AuditGoal", fields: [entityId], references: [id])
+  userId     String
+  user       User     @relation("AuditUser", fields: [userId], references: [id])
+  action     String
+  oldValue   Json?
+  newValue   Json?
+  timestamp  DateTime @default(now())
+}
+
+model EscalationRule {
+  id              String            @id @default(cuid())
+  trigger         EscalationTrigger
+  daysThreshold   Int
+  notifyEmployee  Boolean           @default(true)
+  notifyManager   Boolean           @default(true)
+  notifyHR        Boolean           @default(false)
+  isActive        Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+}
