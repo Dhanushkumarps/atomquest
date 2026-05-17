@@ -1,6 +1,10 @@
 import type { NextAuthConfig } from "next-auth";
 import type { Role } from "@prisma/client";
 
+// Delete mismatched URLs that Vercel might inject
+delete process.env.NEXTAUTH_URL;
+delete process.env.AUTH_URL;
+
 // Edge-safe auth config — NO Prisma, NO bcrypt, NO Node.js-only modules.
 // This is used by middleware.ts which runs on the Edge runtime.
 export const authConfig: NextAuthConfig = {

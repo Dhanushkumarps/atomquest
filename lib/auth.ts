@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
@@ -59,8 +59,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           };
         } catch (error: any) {
           console.error("Auth Error:", error);
-          // Throw a specific error message to display on the client
-          throw new Error("Database connection failed. Please check Vercel DATABASE_URL.");
+          // Throw specific NextAuth error so it reaches the client
+          class CustomError extends CredentialsSignin {
+            code = "Database connection failed. Please check Vercel DATABASE_URL.";
+          }
+          throw new CustomError();
         }
       },
     }),
