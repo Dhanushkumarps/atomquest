@@ -1,12 +1,17 @@
 import Groq from "groq-sdk";
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+function getGroqClient() {
+  return new Groq({ 
+    apiKey: process.env.GROQ_API_KEY || "placeholder"
+  });
+}
 
 export async function suggestGoals(
   department: string,
   role: string,
   existingGoals: Array<{ title: string }>
 ) {
+  const groq = getGroqClient();
   const response = await groq.chat.completions.create({
     model: "llama-3.1-70b-versatile",
     messages: [
@@ -51,6 +56,7 @@ export async function generateCheckinSummary(
   planned: number,
   actual: number
 ): Promise<string> {
+  const groq = getGroqClient();
   const response = await groq.chat.completions.create({
     model: "llama-3.1-70b-versatile",
     messages: [
