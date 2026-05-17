@@ -97,43 +97,43 @@ async function main() {
   const goalData = [
     {
       thrustArea: "Revenue Growth",
-      title: "Achieve Q4 Revenue Target of ₹50L",
-      description: "Drive sales efforts to achieve the quarterly revenue target of ₹50 lakhs through strategic client acquisition and upselling.",
+      title: "Achieve Revenue Target of $500K",
+      description: "Drive sales and marketing efforts to achieve the $500K revenue target.",
       uom: "NUMERIC_MIN" as const,
-      target: 50,
+      target: 500000,
+      weightage: 30,
+    },
+    {
+      thrustArea: "Customer Experience",
+      title: "Reduce Customer Response Time to under 2 Hours",
+      description: "Improve our support workflows to ensure all customer inquiries are responded to in under 2 hours.",
+      uom: "NUMERIC_MAX" as const,
+      target: 2,
       weightage: 25,
     },
     {
-      thrustArea: "Customer Success",
-      title: "Maintain NPS Score above 70",
-      description: "Ensure customer satisfaction by maintaining Net Promoter Score above 70 through proactive support and engagement.",
-      uom: "NUMERIC_MIN" as const,
-      target: 70,
-      weightage: 20,
-    },
-    {
       thrustArea: "Product Delivery",
-      title: "Reduce Feature Delivery TAT to 5 days",
-      description: "Improve engineering efficiency by reducing the average time-to-deliver new features from current 8 days to 5 days.",
-      uom: "NUMERIC_MAX" as const,
-      target: 5,
+      title: "Launch Q3 Product Feature on Schedule",
+      description: "Deliver the newly designed product feature on time with no major bugs.",
+      uom: "TIMELINE" as const,
+      target: 1,
       weightage: 20,
     },
     {
-      thrustArea: "Quality",
-      title: "Achieve Zero Critical Production Bugs",
-      description: "Maintain zero critical production incidents through improved testing processes and code review standards.",
+      thrustArea: "Health & Safety",
+      title: "Zero Safety Incidents This Quarter",
+      description: "Maintain a perfectly safe working environment by strictly adhering to all safety protocols.",
       uom: "ZERO" as const,
       target: 0,
-      weightage: 20,
+      weightage: 15,
     },
     {
       thrustArea: "Learning & Development",
-      title: "Complete Cloud Architecture Certification",
-      description: "Obtain AWS Solutions Architect certification to upskill in cloud technologies and improve team capabilities.",
+      title: "Complete Leadership Training Program",
+      description: "Successfully complete the mandated 6-week leadership and management training program.",
       uom: "TIMELINE" as const,
       target: 1,
-      weightage: 15,
+      weightage: 10,
     },
   ];
 
@@ -158,9 +158,9 @@ async function main() {
     data: {
       goalId: goals[0].id,
       quarter: "Q1",
-      actual: 42,
+      actual: 450000,
       status: "ON_TRACK",
-      progressScore: (42 / 50) * 100, // 84%
+      progressScore: (450000 / 500000) * 100, // 90%
     },
   });
 
@@ -168,9 +168,9 @@ async function main() {
     data: {
       goalId: goals[1].id,
       quarter: "Q1",
-      actual: 75,
+      actual: 1.5,
       status: "COMPLETED",
-      progressScore: (75 / 70) * 100, // 107% (capped at 150)
+      progressScore: (2 / 1.5) * 100, // 133%
     },
   });
 
@@ -178,9 +178,9 @@ async function main() {
     data: {
       goalId: goals[2].id,
       quarter: "Q1",
-      actual: 6,
-      status: "ON_TRACK",
-      progressScore: (5 / 6) * 100, // 83.3%
+      actual: 1,
+      status: "COMPLETED",
+      progressScore: 100, // 100%
     },
   });
 
