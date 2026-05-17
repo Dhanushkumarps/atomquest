@@ -14,6 +14,7 @@ interface GoalFormProps {
   existingTotalWeightage?: number;
   existingGoals?: Array<{ title: string; weightage: number }>;
   department?: string | null;
+  isSharedReadOnly?: boolean;
 }
 
 const UOM_OPTIONS = [
@@ -30,6 +31,7 @@ export function GoalForm({
   existingTotalWeightage = 0,
   existingGoals = [],
   department,
+  isSharedReadOnly = false,
 }: GoalFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -105,8 +107,9 @@ export function GoalForm({
             </label>
             <input
               {...register("thrustArea")}
+              disabled={isSharedReadOnly}
               placeholder="e.g. Revenue Growth, Customer Success"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
             />
             {errors.thrustArea && (
               <p className="mt-1 text-xs text-red-500">{errors.thrustArea.message}</p>
@@ -119,7 +122,8 @@ export function GoalForm({
             </label>
             <select
               {...register("uom")}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white"
+              disabled={isSharedReadOnly}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white disabled:bg-gray-100 disabled:text-gray-500"
             >
               <option value="">Select UoM</option>
               {UOM_OPTIONS.map((opt) => (
@@ -138,8 +142,9 @@ export function GoalForm({
           </label>
           <input
             {...register("title")}
+            disabled={isSharedReadOnly}
             placeholder="e.g. Achieve Q4 Revenue Target of ₹50L"
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
           />
           {errors.title && <p className="mt-1 text-xs text-red-500">{errors.title.message}</p>}
         </div>
@@ -150,9 +155,10 @@ export function GoalForm({
           </label>
           <textarea
             {...register("description")}
+            disabled={isSharedReadOnly}
             rows={3}
             placeholder="Describe the goal in detail, including how success will be measured..."
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none"
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none disabled:bg-gray-100 disabled:text-gray-500"
           />
           {errors.description && (
             <p className="mt-1 text-xs text-red-500">{errors.description.message}</p>
@@ -168,8 +174,9 @@ export function GoalForm({
               {...register("target", { valueAsNumber: true })}
               type="number"
               step="any"
+              disabled={isSharedReadOnly}
               placeholder="e.g. 50"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
             />
             {errors.target && <p className="mt-1 text-xs text-red-500">{errors.target.message}</p>}
           </div>
@@ -213,13 +220,15 @@ export function GoalForm({
         </div>
 
         <div className="flex items-center justify-between pt-2">
-          <button
-            type="button"
-            onClick={() => setShowAI(!showAI)}
-            className="flex items-center gap-2 px-4 py-2 border border-violet-200 text-violet-700 rounded-lg text-sm font-medium hover:bg-violet-50 transition-all"
-          >
-            ✨ AI Goal Suggestions
-          </button>
+          {!isSharedReadOnly && (
+            <button
+              type="button"
+              onClick={() => setShowAI(!showAI)}
+              className="flex items-center gap-2 px-4 py-2 border border-violet-200 text-violet-700 rounded-lg text-sm font-medium hover:bg-violet-50 transition-all"
+            >
+              ✨ AI Goal Suggestions
+            </button>
+          )}
 
           <button
             type="submit"

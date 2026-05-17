@@ -98,6 +98,7 @@ export default function GoalDetailPage() {
           <GoalForm
             goalId={id}
             initialData={goal}
+            isSharedReadOnly={goal.isShared && goal.sharedFromId !== null}
             onSuccess={() => {
               setEditing(false);
               queryClient.invalidateQueries({ queryKey: ["goal", id] });

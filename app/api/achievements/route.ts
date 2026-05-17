@@ -62,5 +62,28 @@ export async function POST(req: Request) {
     update: { actual, status: status || "ON_TRACK", progressScore, notes },
   });
 
+  // Sync for shared goals
+  if (goal.isShared) {
+    const originGoalId = goal.sharedFromId || goal.id;
+    const linkedGoals = await prisma.goal.findMany({
+      where: {
+        OR: [
+          { id: originGoalId },
+          { sharedFromId: originGoalId }
+        ]
+      }
+    });
+
+    for (const linkedGoal of linkedGoals) {
+      if (linkedGoal.id !== goal.id) {
+        await prisma.achievement.upsert({
+          where: { goalId_quarter: { goalId: linkedGoal.id, quarter } },
+          create: { goalId: linkedGoal.id, quarter, actual, status: status || "ON_TRACK", progressScore, notes },
+          update: { actual, status: status || "ON_TRACK", progressScore, notes },
+        });
+      }
+    }
+  }
+
   return NextResponse.json({ achievement });
 }
