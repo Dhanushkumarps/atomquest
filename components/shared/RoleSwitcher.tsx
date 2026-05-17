@@ -26,6 +26,11 @@ export function RoleSwitcher() {
         redirect: false,
       });
 
+      if (result?.error) {
+        alert("Role switch failed: " + result.error);
+        return;
+      }
+
       if (result?.ok) {
         if (role === "EMPLOYEE") router.push("/employee/dashboard");
         else if (role === "MANAGER") router.push("/manager/dashboard");

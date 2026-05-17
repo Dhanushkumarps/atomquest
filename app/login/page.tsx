@@ -24,26 +24,48 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email,
       password,
-      callbackUrl: "/",
+      redirect: false,
     });
+
+    if (result?.error) {
+      setError(result.error);
+      setLoading(false);
+      return;
+    }
+
+    if (result?.ok) {
+      router.push("/");
+      router.refresh();
+    }
   };
 
   const loginAsDemo = async (demoEmail: string) => {
     setLoading(true);
     setError(null);
     
-    let callbackUrl = "/employee/dashboard";
-    if (demoEmail.includes("manager")) callbackUrl = "/manager/dashboard";
-    if (demoEmail.includes("admin")) callbackUrl = "/admin/dashboard";
+    let target = "/employee/dashboard";
+    if (demoEmail.includes("manager")) target = "/manager/dashboard";
+    if (demoEmail.includes("admin")) target = "/admin/dashboard";
 
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email: demoEmail,
       password: "demo123",
-      callbackUrl,
+      redirect: false,
     });
+
+    if (result?.error) {
+      setError(`Login failed: ${result.error}. (Check DB or Vercel URL/Secret)`);
+      setLoading(false);
+      return;
+    }
+
+    if (result?.ok) {
+      router.push(target);
+      router.refresh();
+    }
   };
 
   return (
